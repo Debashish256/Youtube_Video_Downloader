@@ -1,44 +1,25 @@
-import pytube
+from tkinter import *                 # Importing the tkinter module
+from pytube import YouTube            # Importing the YouTube class from pytube module
 
-def download_video(url, resolution):
-    itag = choose_resolution(resolution)
-    video = pytube.YouTube(url)
-    stream = video.streams.get_by_itag(itag)
-    stream.download()
-    return stream.default_filename
+root = Tk()                           # Creating a new tkinter window
+root.geometry('500x300')              # Setting the size of the window to 500x300 pixels
+root.resizable(0,0)                   # Preventing the window from being resized
+root.title("DataFlair-youtube video downloader")  # Setting the title of the window
 
-def download_videos(urls, resolution):
-    for url in urls:
-        download_video(url, resolution)
+Label(root,text = 'Youtube Video Downloader', font ='arial 20 bold').pack()  # Creating and packing a label for the title
 
-def download_playlist(url, resolution):
-    playlist = pytube.Playlist(url)
-    download_videos(playlist.video_urls, resolution)
+link = StringVar()                    # Creating a StringVar object for storing the link
 
-def choose_resolution(resolution):
-    if resolution in ["low", "360", "360p"]:
-        itag = 18
-    elif resolution in ["medium", "720", "720p", "hd"]:
-        itag = 22
-    elif resolution in ["high", "1080", "1080p", "fullhd", "full_hd", "full hd"]:
-        itag = 137
-    elif resolution in ["very high", "2160", "2160p", "4K", "4k"]:
-        itag = 313
-    else:
-        itag = 18
-    return itag
+Label(root, text = 'Paste Link Here:', font = 'arial 15 bold').place(x= 160 , y = 60)  # Creating and placing a label for the link input
+link_enter = Entry(root, width = 70,textvariable = link).place(x = 32, y = 90)   # Creating and placing an Entry widget for the link input
 
+# Defining the Downloader function to be called when the download button is clicked
+def Downloader():
+      url =YouTube(str(link.get()))  # Creating a YouTube object with the entered link
+      video = url.streams.first()     # Getting the first available stream of the video
+      video.download()               # Downloading the video
+      Label(root, text = 'DOWNLOADED', font = 'arial 15').place(x= 180 , y = 210)    # Creating and placing a label to indicate the download is complete
 
-def input_links():
-    print("Enter the links of the videos (end by entering 'STOP'):")
+Button(root,text = 'DOWNLOAD', font = 'arial 15 bold' ,bg = 'pale violet red', padx = 2, command = Downloader).place(x=180 ,y = 150)  # Creating and placing a download button that calls the Downloader function
 
-    links = []
-    link = ""
-
-    while link != "STOP" and link != "stop":
-        link = input()
-        links.append(link)
-
-    links.pop()
-
-    return links
+root.mainloop()                       # Starting the tkinter event loop
